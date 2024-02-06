@@ -5,7 +5,7 @@ import ru.raysmith.tgbot.model.bot.ChatId
 import team.mke.tg.BaseTgUser
 import team.mke.tg.TgUserSelector
 
-fun BaseUpdateCommandsImpl(userSelector: TgUserSelector<ChatId.ID, BaseTgUser<*>>) =
+fun <T : BaseTgUser<*>>BaseUpdateCommandsImpl(userSelector: TgUserSelector<ChatId.ID, T>) =
     UpdateCommands { chatId, silently ->
         userSelector.select(chatId)?.provideCommands()?.also {
             if (!silently) {

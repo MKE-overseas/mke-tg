@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    kotlin("jvm") version "2.0.0-Beta2"
     id("maven-publish")
-    kotlin("jvm") version "1.9.10"
 }
 
 group = "team.mke"
@@ -27,6 +27,7 @@ tasks{
         }
     }
 }
+
 kotlin {
     jvmToolchain(17)
 }
@@ -45,6 +46,11 @@ publishing {
                 username = System.getenv("GIT_USERNAME")
                 password = System.getenv("GIT_TOKEN_PUBLISH")
             }
+        }
+    }
+    publications {
+        register<MavenPublication>("gpr") {
+            from(components["java"])
         }
     }
 }

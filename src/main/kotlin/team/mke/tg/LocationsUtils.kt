@@ -9,7 +9,7 @@ import ru.raysmith.tgbot.utils.locations.LocationConfig
 import ru.raysmith.tgbot.utils.locations.LocationsWrapper
 import ru.raysmith.tgbot.utils.message.MessageAction
 
-suspend fun <T : LocationConfig> LocationsWrapper<T>.location(location: ILocation, newLocation: ru.raysmith.tgbot.utils.locations.Location<T>.() -> Unit) {
+suspend fun <T : LocationConfig> LocationsWrapper<T>.location(location: ILocation, newLocation: suspend ru.raysmith.tgbot.utils.locations.Location<T>.() -> Unit) {
     location(location.name, newLocation)
 }
 
@@ -38,7 +38,7 @@ suspend fun setupBack(location: ILocation, ignoreData: Boolean = false) {
     }
 }
 
-suspend fun CallbackQueryHandler.isBack(handler: (data: String?) -> Unit) {
+suspend fun CallbackQueryHandler.isBack(handler: suspend (data: String?) -> Unit) {
     isDataEqual(CallbackQuery.BACK) {
         handler(null)
     }

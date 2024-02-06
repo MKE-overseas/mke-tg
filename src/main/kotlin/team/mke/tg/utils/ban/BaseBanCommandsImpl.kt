@@ -20,15 +20,15 @@ import team.mke.tg.TgUserSelector
  * @param userSelectorById селектор пользователя по id
  * @param userSelectorByPhone селектор пользователя по телефону
  * */
-fun BaseBanCommandsImpl(
+fun <U : BaseTgUser<*>> BaseBanCommandsImpl(
     bot: Bot,
-    userSelectorById: TgUserSelector<Long, BaseTgUser<*>>, userSelectorByPhone: TgUserSelector<String, BaseTgUser<*>>
-) = object : BanCommands {
-    override fun ban(user: BaseTgUser<*>) {
+    userSelectorById: TgUserSelector<Long, U>, userSelectorByPhone: TgUserSelector<String, U>
+) = object : BanCommands<U> {
+    override fun ban(user: U) {
         transaction { user.ban() }
     }
 
-    override fun unban(user: BaseTgUser<*>) {
+    override fun unban(user: U) {
         transaction { user.unban() }
     }
 
@@ -50,7 +50,7 @@ fun BaseBanCommandsImpl(
     }
 
     context(BotContext<*>)
-    override suspend fun getRestrictedTgUser(chatId: ChatId.ID, command: BotCommand): BaseTgUser<*>? {
+    override suspend fun getRestrictedTgUser(chatId: ChatId.ID, command: BotCommand): U? {
         suspend fun error() = sendErrorSyntax(isBan = command.body == BotCommand.BAN)
 
         if (command.argsString == null) {

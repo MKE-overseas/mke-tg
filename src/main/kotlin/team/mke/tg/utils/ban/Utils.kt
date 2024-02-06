@@ -7,9 +7,9 @@ import ru.raysmith.tgbot.core.handler.base.isCommand
 import ru.raysmith.tgbot.core.send
 import ru.raysmith.tgbot.model.bot.BotCommand
 import ru.raysmith.tgbot.model.network.CallbackQuery
-import ru.raysmith.tgbot.utils.Pagination
 import ru.raysmith.tgbot.utils.message.MessageAction
 import ru.raysmith.tgbot.utils.message.message
+import ru.raysmith.tgbot.utils.pagination.Pagination
 import ru.raysmith.tgbot.utils.toChatId
 import team.mke.tg.BaseTgUser
 import team.mke.tg.getFullName
@@ -23,7 +23,7 @@ val BotCommand.Companion.BANS_MENU get() = "bans"
 val CallbackQuery.Companion.BANS_PAGE_PREFIX get() = "bans_pages_"
 val CallbackQuery.Companion.BANS_BAN_PREFIX get() = "bans_ban_"
 
-suspend fun CommandHandler.setupBans(banCommandsImpl: BanCommands) {
+suspend fun <U : BaseTgUser<*>> CommandHandler.setupBans(banCommandsImpl: BanCommands<U>) {
     if (banCommandsImpl.hasAccess(getChatIdOrThrow())) {
         isCommand(BotCommand.BAN) {
             val tgUser = banCommandsImpl.getRestrictedTgUser(getChatIdOrThrow(), command) ?: return@isCommand
@@ -46,7 +46,7 @@ suspend fun CommandHandler.setupBans(banCommandsImpl: BanCommands) {
     }
 }
 
-suspend fun EventHandler.sendBansMessage(users: Iterable<BaseTgUser<*>>, action: MessageAction, page: Long = Pagination.PAGE_FIRST) = message(action) {
+suspend fun <U : BaseTgUser<*>> EventHandler.sendBansMessage(users: Iterable<U>, action: MessageAction, page: Int = Pagination.PAGE_FIRST) = message(action) {
     suspendTransaction {
         text = "Отмеченные пользователи галочками — заблокированы"
         inlineKeyboard {
@@ -59,7 +59,7 @@ suspend fun EventHandler.sendBansMessage(users: Iterable<BaseTgUser<*>>, action:
     }
 }
 
-suspend fun CommandHandler.setupBans(user: BaseTgUser<*>, users: Iterable<BaseTgUser<*>>) {
+suspend fun <U : BaseTgUser<*>> CommandHandler.setupBans(user: BaseTgUser<*>, users: Iterable<U>) {
     if (!user.isAdmin || user.isBan) return
 
     isCommand(BotCommand.BANS_MENU) {
@@ -67,10 +67,10 @@ suspend fun CommandHandler.setupBans(user: BaseTgUser<*>, users: Iterable<BaseTg
     }
 }
 
-suspend fun CallbackQueryHandler.setupBans(
-    tgUser: BaseTgUser<*>,
-    usersSelector: suspend () -> Iterable<BaseTgUser<*>>,
-    userSelector: suspend (userId: Long) -> BaseTgUser<*>?
+suspend fun <U : BaseTgUser<*>> CallbackQueryHandler.setupBans(
+    tgUser: U,
+    usersSelector: suspend () -> Iterable<U>,
+    userSelector: suspend (userId: Long) -> U?
 ) {
     if (!tgUser.isAdmin || tgUser.isBan) return
 
@@ -86,7 +86,7 @@ suspend fun CallbackQueryHandler.setupBans(
             userSelector(userId.toLong())?.apply {
                 isBan = !isBan
                 if (!isBan) {
-                    send(userId.toLong().toChatId()) {
+                    send(chatId = userId.toLong().toChatId()) {
                         textWithEntities {
                             italic("Вы были разблокированы")
                         }

@@ -5,6 +5,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
+import ru.raysmith.tgbot.core.BotContext
 import kotlin.reflect.KClass
 
 abstract class BaseTgUserTable<L : Enum<L>>(
@@ -26,7 +27,8 @@ abstract class BaseTgUser<L : Enum<L>>(table: BaseTgUserTable<L>, id: EntityID<L
     var isRegistered by table.isRegistered
     var isAdmin by table.isAdmin
 
-    abstract fun provideCommands()
+    context(BotContext<*>)
+    abstract suspend fun provideCommands()
 
     fun ban() {
         isBan = true

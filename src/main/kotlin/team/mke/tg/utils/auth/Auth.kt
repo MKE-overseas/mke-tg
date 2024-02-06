@@ -1,7 +1,8 @@
 package team.mke.tg.utils.auth
 
-import ru.raysmith.google.sheets.GoogleSheetsService
-import ru.raysmith.google.sheets.Range
+import ru.raysmith.google.sheets.service.GoogleSheetsService
+import ru.raysmith.google.sheets.service.Range
+import ru.raysmith.google.sheets.service.get
 import ru.raysmith.tgbot.core.handler.EventHandler
 import ru.raysmith.tgbot.core.handler.base.MessageHandler
 import ru.raysmith.tgbot.model.bot.message.MessageText
@@ -10,38 +11,47 @@ import ru.raysmith.tgbot.utils.message.message
 import ru.raysmith.tgbot.utils.n
 import team.mke.tg.BaseTgUser
 
-suspend fun MessageHandler.setupAuth(
-    tgUser: BaseTgUser<*>,
+suspend fun <U : BaseTgUser<*>> MessageHandler.setupAuth(
+    tgUser: U,
     sheetService: GoogleSheetsService,
-    phonesSpreadsheetId: String,
-    sendAuthMessage: suspend MessageHandler.() -> Unit,
-    rowCheck: (row: List<Any>) -> Boolean,
-    onAuthNotAvailable: suspend MessageHandler.(e: Exception) -> Unit = { sendAuthTemporaryNotAvailableMessage() },
+    phonesSpreadsheetId: String?,
+    sendAuthMessage: suspend MessageHandler.() -> Unit = { sendAuthMessage(MessageAction.SEND) },
+    getPhone: suspend MessageHandler.() -> String?,
+    rowCheck: suspend MessageHandler.(phone: String, row: List<Any>) -> Boolean = { phone, row -> phone in row  },
+    onAuthNotAvailable: suspend MessageHandler.(e: Exception?) -> Unit = { sendAuthTemporaryNotAvailableMessage() },
     onFail: suspend MessageHandler.() -> Unit,
-    onSuccess: suspend MessageHandler.(row: List<Any>?) -> Unit
+    onSuccess: suspend MessageHandler.(phone: String, row: List<Any>?) -> Unit
 ) {
     if (!tgUser.isRegistered) {
-        if (message.contact != null) {
-            try {
-                val values = sheetService.SpreadSheets.values(phonesSpreadsheetId, Range())
+        val phone = getPhone() ?: run {
+            sendAuthMessage()
+            return
+        }
 
-                var result = false
-                var currentRow: List<Any>? = null
-                for (row in values) {
-                    result = rowCheck(row)
-                    currentRow = row
-                    if (result) {
-                        break
-                    }
+        try {
+            val values = sheetService.SpreadSheets.Values.get(
+                phonesSpreadsheetId ?: run {
+                    onAuthNotAvailable(null)
+                    return
+                }, Range()
+            )
+
+            var result = false
+            var currentRow: List<Any>? = null
+            for (row in values) {
+                result = rowCheck(phone, row)
+                currentRow = row
+                if (result) {
+                    break
                 }
-
-                onSuccess(currentRow)
-            } catch (e: Exception) {
-                onAuthNotAvailable(e)
             }
 
-            onFail()
-        } else sendAuthMessage()
+            onSuccess(phone, currentRow)
+        } catch (e: Exception) {
+            onAuthNotAvailable(e)
+        }
+
+        onFail()
     }
 }
 
@@ -65,7 +75,7 @@ suspend fun EventHandler.sendAuthMessage(
     }
 }
 
-internal suspend fun EventHandler.sendAuthTemporaryNotAvailableMessage(
+suspend fun EventHandler.sendAuthTemporaryNotAvailableMessage(
     additionalInfo: MessageText.() -> MessageText = { this }
 ) = send {
     textWithEntities {

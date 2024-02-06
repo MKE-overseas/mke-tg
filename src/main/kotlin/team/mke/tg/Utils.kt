@@ -4,6 +4,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Transaction
+import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.raysmith.tgbot.core.handler.EventHandler
 import ru.raysmith.tgbot.core.handler.base.CallbackQueryHandler
@@ -25,7 +26,7 @@ typealias InlineRow = MessageInlineKeyboard.Row
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-fun LongEntityClass<BaseTgUser<*>>.findOrAdd(userId: Long) = transaction { findById(userId) ?: new(userId) {} }
+fun <U : BaseTgUser<*>> LongEntityClass<U>.findOrAdd(userId: Long) = transaction { findById(userId) ?: new(userId) {} }
 
 suspend fun EventHandler.handleEntityNotAvailable(message: String = recordNotAvailableMessage) {
     if (this@handleEntityNotAvailable is CallbackQueryHandler) {
@@ -33,9 +34,11 @@ suspend fun EventHandler.handleEntityNotAvailable(message: String = recordNotAva
     } else send(message)
 }
 
-fun MessageText.applyEntities(entities: List<MessageEntity>?, commentMaxLength: Int = IMessage.MAX_TEXT_LENGTH, onText: MessageText.() -> Unit = {}) {
+fun MessageText.applyEntities(entities: List<MessageEntity>?, text: String? = null, commentMaxLength: Int = IMessage.MAX_TEXT_LENGTH) {
     val startLength = currentTextLength
-    onText()
+    if (text != null) {
+        text(text)
+    }
     val filteredEntities = entities?.filter { it.offset < commentMaxLength }
     filteredEntities?.mapIndexed { i, entity ->
         if (i == filteredEntities.lastIndex && entity.offset + entity.length > commentMaxLength) {
@@ -63,6 +66,8 @@ fun MessageText.appendNameFilterHint(hasFilter: Boolean) {
     }
 }
 
-fun <T> suspendTransaction(db: Database? = null, statement: suspend Transaction.() -> T): T = transaction(db) {
-    runBlocking { statement() }
+inline fun <T> suspendTransaction(db: Database? = null, crossinline statement: suspend Transaction.() -> T): T = transaction(db) {
+    runBlocking {
+        statement()
+    }
 }
