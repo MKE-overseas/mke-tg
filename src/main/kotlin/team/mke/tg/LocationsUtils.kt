@@ -1,6 +1,7 @@
 package team.mke.tg
 
 import ru.raysmith.tgbot.core.BotContext
+import ru.raysmith.tgbot.core.BotHolder
 import ru.raysmith.tgbot.core.handler.LocationHandler
 import ru.raysmith.tgbot.core.handler.base.CallbackQueryHandler
 import ru.raysmith.tgbot.core.handler.location.LocationCallbackQueryHandler
@@ -9,6 +10,7 @@ import ru.raysmith.tgbot.utils.locations.LocationConfig
 import ru.raysmith.tgbot.utils.locations.LocationsWrapper
 import ru.raysmith.tgbot.utils.message.MessageAction
 
+context(BotHolder)
 suspend fun <T : LocationConfig> LocationsWrapper<T>.location(location: ILocation, newLocation: suspend ru.raysmith.tgbot.utils.locations.Location<T>.() -> Unit) {
     location(location.name, newLocation)
 }

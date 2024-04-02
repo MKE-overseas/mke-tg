@@ -20,7 +20,7 @@ google-api-services-drive = "v3-rev197-1.25.0"
 
 exposedOption = "1.7"
 utils = "2.4.0"
-tg-bot = "1.0.0-beta.2"
+tg-bot = "1.0.0-beta.5"
 
 logback = "1.4.12"
 slf4j = "2.0.9"
@@ -217,6 +217,7 @@ ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 setupapp = { id = "ru.raysmith.setupapp", version = "1.6" }
 kotest = { id = "io.kotest", version = "0.4.10" }
 karakum = { id = "io.github.sgrishchenko.karakum", version = "1.0.0-alpha.30" }
+nmcp = { id = "com.gradleup.nmcp", version = "0.0.4" }
 
 [bundles]
 ktor-server = [
