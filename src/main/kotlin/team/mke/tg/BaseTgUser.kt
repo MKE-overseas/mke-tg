@@ -17,6 +17,7 @@ abstract class BaseTgUserTable<L : Enum<L>>(
     val isRegistered = bool("is_registered").default(false)
     val isAdmin = bool("is_admin").default(false)
 
+    /** SQL оператор для фильтрации валидных пользователей (не заблокированные и зарегистрированные) */
     fun valid() = isBan.eq(false) and isRegistered.eq(true)
 }
 

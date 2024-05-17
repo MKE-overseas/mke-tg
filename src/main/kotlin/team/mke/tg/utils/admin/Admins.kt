@@ -12,16 +12,18 @@ import ru.raysmith.tgbot.utils.message.MessageAction
 import ru.raysmith.tgbot.utils.message.message
 import ru.raysmith.tgbot.utils.pagination.Pagination
 import ru.raysmith.tgbot.utils.toChatId
-import team.mke.tg.BaseTgUser
-import team.mke.tg.TgUserSelector
-import team.mke.tg.getFullName
-import team.mke.tg.suspendTransaction
+import team.mke.tg.*
 
+/** /admin */
 val BotCommand.Companion.ADMIN_MENU get() = "admin"
+
+/** /admins */
+val BotCommand.Companion.ADMINS get() = "admins"
+
+
 val CallbackQuery.Companion.ADMINS_PAGE_PREFIX get() = "admins_pages_"
 val CallbackQuery.Companion.ADMINS_PROVIDE_PREFIX get() = "admins_provide_"
 
-val BotCommand.Companion.ADMINS get() = "admins"
 
 suspend fun <U : BaseTgUser<*>> EventHandler.sendAdminsMessage(users: Iterable<U>, action: MessageAction, page: Int = Pagination.PAGE_FIRST) = message(action) {
     suspendTransaction {
@@ -36,6 +38,14 @@ suspend fun <U : BaseTgUser<*>> EventHandler.sendAdminsMessage(users: Iterable<U
     }
 }
 
+/**
+ * Добавляет меню по [команде][ADMINS] со списком пользователей для управления статусом администратора.
+ * Доступно только администраторам.
+ *
+ * @param tgUser текущий пользователь контекста
+ * @param userSelector лямбда реализующая [TgUserSelector]
+ * @param usersSelector лямбда возвращающая список всех [*валидных*][BaseTgUserTable.valid] пользователей
+ * */
 class AdminsFeature<U : BaseTgUser<*>>(val tgUser: U, val userSelector: TgUserSelector<Long, U>, val usersSelector: () -> Iterable<U>) : BotFeature {
     override suspend fun handle(handler: EventHandler, handled: Boolean) {
         if (!tgUser.isAdmin) return

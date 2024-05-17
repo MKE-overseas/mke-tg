@@ -152,7 +152,7 @@ firebase-admin = { module = "com.google.firebase:firebase-admin", version = "9.2
 raysmith-exposedOption = { module = "ru.raysmith:exposed-option", version.ref = "exposedOption" }
 raysmith-utils = { module = "ru.raysmith:utils", version.ref = "utils" }
 raysmith-tgBot = { module = "ru.raysmith:tg-bot", version.ref = "tg-bot" }
-raysmith-google = { module = "ru.raysmith:google", version = "0.0.1" }
+raysmith-google = { module = "ru.raysmith:google", version = "1.2.1" }
 raysmith-minimalsui = { module = "ru.raysmith:minimals-ui", version = "1.0.0-rc.1" }
 
 # utils
