@@ -7,7 +7,7 @@ kotlinx-coroutines = "1.7.3"
 kotlinx-serialization = "1.6.1"
 kotlinx-datetime = "0.4.0"
 
-ktor = "2.3.6"
+ktor = "2.3.11"
 
 react = "18.2.0-pre.690"
 
@@ -19,8 +19,8 @@ google-api-services-sheets = "v4-rev612-1.25.0"
 google-api-services-drive = "v3-rev197-1.25.0"
 
 exposedOption = "1.7"
-utils = "2.4.0"
-tg-bot = "1.0.0-beta.5"
+utils = "2.5.1"
+tg-bot = "1.0.0-beta.6"
 
 logback = "1.4.12"
 slf4j = "2.0.9"
@@ -217,7 +217,7 @@ ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 setupapp = { id = "ru.raysmith.setupapp", version = "1.6" }
 kotest = { id = "io.kotest", version = "0.4.10" }
 karakum = { id = "io.github.sgrishchenko.karakum", version = "1.0.0-alpha.30" }
-nmcp = { id = "com.gradleup.nmcp", version = "0.0.4" }
+nmcp = { id = "com.gradleup.nmcp", version = "0.0.7" }
 
 [bundles]
 ktor-server = [
