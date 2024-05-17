@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "team.mke"
-version = "1.2.0"
+version = "1.3.0"
 
 dependencies {
     implementation(libs.raysmith.tgBot)
@@ -48,9 +48,9 @@ publishing {
             from(components["java"])
             pom {
                 packaging = "jar"
-                name.set("Google")
+                name.set("MKE tg utils")
                 url.set("https://github.com/MKE-overseas/mke-tg")
-                description.set("DSL wrappers for java google libs")
+                description.set("MKE features and utils for tg-bot lib")
 
 
 
@@ -95,7 +95,6 @@ nmcp {
     publish("release") {
         username.set(System.getenv("CENTRAL_SONATYPE_USER"))
         password.set(System.getenv("CENTRAL_SONATYPE_PASS"))
-        publicationType.set("USER_MANAGED")
         publicationType.set("AUTOMATIC")
     }
 }

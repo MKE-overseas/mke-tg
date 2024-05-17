@@ -13,6 +13,8 @@ import ru.raysmith.tgbot.utils.n
 import team.mke.tg.BaseTgUser
 import team.mke.tg.TgUserSelector
 
+// TODO create BotFeature
+
 /**
  * Базовая реализация для команд /ban и /unban по id или телефону
  *
