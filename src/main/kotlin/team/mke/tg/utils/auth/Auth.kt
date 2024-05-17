@@ -28,7 +28,7 @@ import team.mke.tg.phoneFormatted
  * @param onFail вызывается, когда телефон не найден в таблице
  * @param onSuccess вызывается, когда телефон найден в таблице
  * */
-class AuthGoogleSheetsFeature<U : BaseTgUser<*>>(
+data class AuthGoogleSheetsFeature<U : BaseTgUser<*>>(
     val tgUser: U,
     val sheetService: GoogleSheetsService,
     val phonesSpreadsheetId: String?,

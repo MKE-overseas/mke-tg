@@ -46,7 +46,7 @@ suspend fun <U : BaseTgUser<*>> EventHandler.sendAdminsMessage(users: Iterable<U
  * @param userSelector лямбда реализующая [TgUserSelector]
  * @param usersSelector лямбда возвращающая список всех [*валидных*][BaseTgUserTable.valid] пользователей
  * */
-class AdminsFeature<U : BaseTgUser<*>>(val tgUser: U, val userSelector: TgUserSelector<Long, U>, val usersSelector: () -> Iterable<U>) : BotFeature {
+data class AdminsFeature<U : BaseTgUser<*>>(val tgUser: U, val userSelector: TgUserSelector<Long, U>, val usersSelector: () -> Iterable<U>) : BotFeature {
     override suspend fun handle(handler: EventHandler, handled: Boolean) {
         if (!tgUser.isAdmin) return
 
