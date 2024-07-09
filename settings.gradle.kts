@@ -1,6 +1,3 @@
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
-}
 rootProject.name = "mke-tg"
 
 fun RepositoryHandler.mavenRaySmith(name: String) {
@@ -16,10 +13,8 @@ fun RepositoryHandler.mavenRaySmith(name: String) {
 @Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
     repositories {
-        mavenLocal() // TODO delete
         mavenCentral()
         mavenRaySmith("tg-bot")
-        mavenRaySmith("utils")
     }
 
     versionCatalogs {

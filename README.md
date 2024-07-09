@@ -1,4 +1,9 @@
 # MKE tg utils
+MKE features and utils for tg-bot lib
+
+## Environment
+- Kotlin 2.0
+- JDK 17
 
 ## Admin menu
 

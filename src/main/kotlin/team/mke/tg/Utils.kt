@@ -1,10 +1,6 @@
 package team.mke.tg
 
-import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.dao.LongEntityClass
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.Transaction
-import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.raysmith.tgbot.core.handler.EventHandler
 import ru.raysmith.tgbot.core.handler.base.CallbackQueryHandler
@@ -63,11 +59,5 @@ fun MessageText.appendNameFilterHint(hasFilter: Boolean) {
         appendClearFilterHint()
     } else {
         italic("Отправьте сообщение для фильтрации по наименованию")
-    }
-}
-
-inline fun <T> suspendTransaction(db: Database? = null, crossinline statement: suspend Transaction.() -> T): T = transaction(db) {
-    runBlocking {
-        statement()
     }
 }

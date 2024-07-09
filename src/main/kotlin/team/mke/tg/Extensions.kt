@@ -1,11 +1,11 @@
 package team.mke.tg
 
-import ru.raysmith.tgbot.model.network.chat.Chat
+import ru.raysmith.tgbot.model.network.chat.IChat
 import ru.raysmith.tgbot.model.network.media.Contact
 import ru.raysmith.utils.letIf
 import ru.raysmith.utils.notNull
 
-fun Chat.getFullName(includeUsername: Boolean = false): String = buildString {
+fun IChat.getFullName(includeUsername: Boolean = false): String = buildString {
     append(firstName ?: "")
     if (firstName notNull lastName) {
         append(" ")

@@ -1,5 +1,6 @@
 package team.mke.tg.utils
 
+import ru.raysmith.tgbot.core.BotConfig
 import ru.raysmith.tgbot.utils.datepicker.DatePicker
 import ru.raysmith.utils.atEndOfDay
 import team.mke.tg.incomingBotDateFormat
@@ -19,8 +20,8 @@ sealed class IncomingBotDateResult {
     data object Failed : IncomingBotDateResult()
 }
 
-fun String.incomingBotDate(datePicker: DatePicker, dateFormat: DateTimeFormatter = defaultDateFormat, throwIfWrong: Boolean = false): IncomingBotDateResult {
-    val dates = datePicker.dates(null)
+fun String.incomingBotDate(botConfig: BotConfig, datePicker: DatePicker, dateFormat: DateTimeFormatter = defaultDateFormat, throwIfWrong: Boolean = false): IncomingBotDateResult {
+    val dates = datePicker.dates(botConfig, null)
 
     return if (this.matches("^\\d{2}\\.\\d{2}\\.\\d{4}$".toRegex())) {
         try {

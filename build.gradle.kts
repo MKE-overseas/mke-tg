@@ -1,42 +1,55 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
-    kotlin("jvm") version "2.0.0-Beta2"
+    kotlin("jvm") version "2.0.0"
     `maven-publish`
     signing
     alias(libs.plugins.nmcp)
+    alias(libs.plugins.benManes.versions)
 }
 
 group = "team.mke"
-version = "1.3.1"
+version = "1.4.0"
 
 dependencies {
-    implementation(libs.raysmith.tgBot)
+    implementation(libs.raysmith.tgBot.jvm)
     implementation(libs.raysmith.utils)
     implementation(libs.raysmith.google)
+    implementation(libs.mke.utils)
     implementation(libs.exposed.core)
     implementation(libs.exposed.dao)
+    implementation(libs.google.apis.sheets)
 }
 
-tasks{
+tasks {
     test {
         useJUnitPlatform()
     }
 
-    withType<KotlinCompile> {
-        kotlinOptions {
-            freeCompilerArgs += "-Xcontext-receivers"
+    named<DependencyUpdatesTask>("dependencyUpdates").configure {
+        val regex = "^[0-9,.v-]+(-r)?$".toRegex()
+        val stableList = listOf("RELEASE", "FINAL", "GA")
+
+        rejectVersionIf {
+            val stableKeyword = stableList.any { candidate.version.uppercase().contains(it) }
+            val isStable = stableKeyword || regex.matches(candidate.version)
+            isStable.not()
         }
     }
 }
 
 kotlin {
-    jvmToolchain(17)
+    compilerOptions {
+        freeCompilerArgs.add("-Xcontext-receivers")
+    }
 }
 
 java {
-    withSourcesJar()
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
     withJavadocJar()
+    withSourcesJar()
 }
 
 publishing {
@@ -91,6 +104,12 @@ publishing {
     }
 }
 
+signing {
+    publishing.publications.forEach {
+        sign(it)
+    }
+}
+
 nmcp {
     publish("release") {
         username.set(System.getenv("CENTRAL_SONATYPE_USER"))
@@ -100,7 +119,7 @@ nmcp {
 }
 
 
-signing {
-    sign(configurations.archives.get())
-    sign(publishing.publications["release"])
-}
+//signing {
+//    sign(configurations.archives.get())
+//    sign(publishing.publications["release"])
+//}

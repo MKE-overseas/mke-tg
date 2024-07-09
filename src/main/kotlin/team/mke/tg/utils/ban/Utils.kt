@@ -13,8 +13,8 @@ import ru.raysmith.tgbot.utils.pagination.Pagination
 import ru.raysmith.tgbot.utils.toChatId
 import team.mke.tg.BaseTgUser
 import team.mke.tg.getFullName
-import team.mke.tg.suspendTransaction
 import team.mke.tg.utils.admin.sendAdminsMessage
+import team.mke.utils.exposed.suspendTransaction
 
 val BotCommand.Companion.BAN get() = "ban"
 val BotCommand.Companion.UNBAN get() = "unban"

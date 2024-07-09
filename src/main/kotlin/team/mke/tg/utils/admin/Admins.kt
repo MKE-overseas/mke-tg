@@ -13,6 +13,7 @@ import ru.raysmith.tgbot.utils.message.message
 import ru.raysmith.tgbot.utils.pagination.Pagination
 import ru.raysmith.tgbot.utils.toChatId
 import team.mke.tg.*
+import team.mke.utils.exposed.suspendTransaction
 
 /** /admin */
 val BotCommand.Companion.ADMIN_MENU get() = "admin"
