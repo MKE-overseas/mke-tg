@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "team.mke"
-version = "1.4.0"
+version = "1.4.1"
 
 dependencies {
     implementation(libs.raysmith.tgBot.jvm)
