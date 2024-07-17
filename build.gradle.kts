@@ -9,11 +9,11 @@ plugins {
 }
 
 group = "team.mke"
-version = "1.4.1"
+version = "1.4.2"
 
 dependencies {
     implementation(libs.raysmith.tgBot.jvm)
-    implementation(libs.raysmith.utils)
+    implementation(libs.raysmith.utils.jvm)
     implementation(libs.raysmith.google)
     implementation(libs.mke.utils)
     implementation(libs.exposed.core)

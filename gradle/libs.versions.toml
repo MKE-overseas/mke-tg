@@ -2,9 +2,9 @@
 benManes-versions = "0.51.0"
 exposed = "0.52.0"
 nmcp = "0.0.8"
-mke-utils = "1.0.0"
+mke-utils = "2.1.0"
 rs-google = "1.2.1"
-rs-tg-bot = "1.0.0-beta.9"
+rs-tg-bot = "1.0.0-beta.11"
 rs-utils = "3.0.0"
 
 [libraries]
@@ -18,6 +18,7 @@ google-apis-sheets = { module = "com.google.apis:google-api-services-sheets", ve
 
 # raysmith
 raysmith-utils = { module = "ru.raysmith:utils", version.ref = "rs-utils" }
+raysmith-utils-jvm = { module = "ru.raysmith:utils-jvm", version.ref = "rs-utils" }
 raysmith-tgBot = { module = "ru.raysmith:tg-bot", version.ref = "rs-tg-bot" }
 raysmith-tgBot-jvm = { module = "ru.raysmith:tg-bot-jvm", version.ref = "rs-tg-bot" }
 raysmith-google = { module = "ru.raysmith:google", version.ref = "rs-google" }
