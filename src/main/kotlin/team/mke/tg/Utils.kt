@@ -10,6 +10,7 @@ import ru.raysmith.tgbot.model.bot.message.IMessage
 import ru.raysmith.tgbot.model.bot.message.MessageText
 import ru.raysmith.tgbot.model.bot.message.keyboard.MessageInlineKeyboard
 import ru.raysmith.tgbot.model.network.message.MessageEntity
+import ru.raysmith.tgbot.model.network.message.ReplyParameters
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -24,10 +25,17 @@ typealias InlineRow = MessageInlineKeyboard.Row
 
 fun <U : BaseTgUser<*>> LongEntityClass<U>.findOrAdd(userId: Long) = transaction { findById(userId) ?: new(userId) {} }
 
-suspend fun EventHandler.handleEntityNotAvailable(message: String = recordNotAvailableMessage) {
+suspend fun EventHandler.handleEntityNotAvailable(message: String = recordNotAvailableMessage, reply: Boolean = false) {
     if (this@handleEntityNotAvailable is CallbackQueryHandler) {
         alert(message)
-    } else send(message)
+    } else {
+        send {
+            if (reply && messageId != null) {
+                replyParameters = ReplyParameters(messageId!!)
+            }
+            text = message
+        }
+    }
 }
 
 fun MessageText.applyEntities(entities: List<MessageEntity>?, text: String? = null, commentMaxLength: Int = IMessage.MAX_TEXT_LENGTH) {
