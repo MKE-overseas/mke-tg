@@ -1,11 +1,12 @@
 [versions]
+kotlin = "2.0.21"
 benManes-versions = "0.51.0"
-exposed = "0.52.0"
-nmcp = "0.0.8"
-mke-utils = "2.1.0"
-rs-google = "1.2.1"
-rs-tg-bot = "1.0.0-beta.11"
-rs-utils = "3.0.0"
+exposed = "0.55.0"
+nmcp = "0.0.9"
+mke-utils = "2.9.0"
+rs-google = "2.0.0"
+rs-tg-bot = "1.0.0-beta.13"
+rs-utils = "3.3.0"
 
 [libraries]
 

@@ -15,6 +15,7 @@ dependencyResolutionManagement {
     repositories {
         mavenCentral()
         mavenRaySmith("tg-bot")
+        mavenLocal()
     }
 
     versionCatalogs {

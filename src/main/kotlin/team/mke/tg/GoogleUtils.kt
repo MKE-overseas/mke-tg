@@ -6,9 +6,9 @@ import com.google.api.services.sheets.v4.model.ExtendedValue
 import com.google.api.services.sheets.v4.model.TextFormat
 import ru.raysmith.google.model.api.HorizontalAlign
 import ru.raysmith.google.model.api.WrapStrategy
-import ru.raysmith.google.sheets.utils.GoogleDSL
 import ru.raysmith.google.sheets.utils.extendedValue
 import ru.raysmith.google.sheets.utils.hyperlink
+import ru.raysmith.google.utils.GoogleDSL
 
 @GoogleDSL
 fun CellData.tgHyperLinkOrText(

@@ -1,7 +1,7 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
-    kotlin("jvm") version "2.0.0"
+    kotlin("jvm") version libs.versions.kotlin
     `maven-publish`
     signing
     alias(libs.plugins.nmcp)
@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "team.mke"
-version = "1.4.2"
+version = "1.5.0"
 
 dependencies {
     implementation(libs.raysmith.tgBot.jvm)
@@ -117,7 +117,6 @@ nmcp {
         publicationType.set("AUTOMATIC")
     }
 }
-
 
 //signing {
 //    sign(configurations.archives.get())
