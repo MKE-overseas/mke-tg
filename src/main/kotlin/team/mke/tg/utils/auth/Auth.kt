@@ -1,8 +1,8 @@
 package team.mke.tg.utils.auth
 
 import ru.raysmith.google.sheets.service.GoogleSheetsService
-import ru.raysmith.google.sheets.service.get
 import ru.raysmith.google.sheets.utils.Range
+import ru.raysmith.google.sheets.utils.get
 import ru.raysmith.tgbot.core.handler.EventHandler
 import ru.raysmith.tgbot.core.handler.base.MessageHandler
 import ru.raysmith.tgbot.model.bot.message.MessageText

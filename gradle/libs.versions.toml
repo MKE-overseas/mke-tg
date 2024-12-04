@@ -1,12 +1,12 @@
 [versions]
-kotlin = "2.0.21"
+kotlin = "2.1.0"
 benManes-versions = "0.51.0"
-exposed = "0.55.0"
+exposed = "0.56.0"
 nmcp = "0.0.9"
-mke-utils = "2.9.0"
-rs-google = "2.0.0"
+mke-utils = "2.11.0"
+rs-google = "2.0.2"
 rs-tg-bot = "1.0.0-beta.13"
-rs-utils = "3.3.0"
+rs-utils = "3.3.2"
 
 [libraries]
 
@@ -15,7 +15,7 @@ exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "e
 exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" }
 
 # google
-google-apis-sheets = { module = "com.google.apis:google-api-services-sheets", version = "v4-rev20240514-2.0.0" }
+google-apis-sheets = { module = "com.google.apis:google-api-services-sheets", version = "v4-rev20241008-2.0.0" }
 
 # raysmith
 raysmith-utils = { module = "ru.raysmith:utils", version.ref = "rs-utils" }
