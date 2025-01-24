@@ -3,9 +3,9 @@ kotlin = "2.1.0"
 benManes-versions = "0.51.0"
 exposed = "0.56.0"
 nmcp = "0.0.9"
-mke-utils = "2.11.0"
+mke-utils = "2.11.2"
 rs-google = "2.0.2"
-rs-tg-bot = "1.0.0-beta.13"
+rs-tg-bot = "1.0.0-beta.17"
 rs-utils = "3.3.2"
 
 [libraries]
