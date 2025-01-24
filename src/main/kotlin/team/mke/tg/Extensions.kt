@@ -16,6 +16,28 @@ fun IChat.getFullName(includeUsername: Boolean = false): String = buildString {
         append(username)
         append(")")
     }
+
+    if (this.isEmpty()) {
+        append("[${id.value}] Без имени")
+    }
+}
+
+
+fun TgUserWithBaseData<*>.getFullName(includeUsername: Boolean = false): String = buildString {
+    append(firstName)
+    if (lastName != null) {
+        append(" ")
+    }
+    append(lastName ?: "")
+    if (includeUsername && username != null && this.isNotEmpty()) {
+        append(" (")
+        append(username)
+        append(")")
+    }
+
+    if (this.isEmpty()) {
+        append("[$id] Без имени")
+    }
 }
 
 fun Contact.phoneFormatted(onlyRuPhones: Boolean = false) = phoneNumber.phoneFormatted(onlyRuPhones)
