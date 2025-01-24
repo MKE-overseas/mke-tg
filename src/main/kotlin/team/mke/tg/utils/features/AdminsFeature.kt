@@ -1,42 +1,43 @@
-package team.mke.tg.utils.admin
+package team.mke.tg.utils.features
 
 import org.jetbrains.exposed.sql.transactions.transaction
 import ru.raysmith.tgbot.core.handler.EventHandler
 import ru.raysmith.tgbot.core.handler.base.CallbackQueryHandler
 import ru.raysmith.tgbot.core.handler.base.CommandHandler
 import ru.raysmith.tgbot.core.handler.base.isCommand
+import ru.raysmith.tgbot.core.send
 import ru.raysmith.tgbot.model.bot.BotCommand
 import ru.raysmith.tgbot.model.network.CallbackQuery
 import ru.raysmith.tgbot.utils.BotFeature
 import ru.raysmith.tgbot.utils.message.MessageAction
 import ru.raysmith.tgbot.utils.message.message
+import ru.raysmith.tgbot.utils.n
 import ru.raysmith.tgbot.utils.pagination.Pagination
 import ru.raysmith.tgbot.utils.toChatId
-import team.mke.tg.BaseTgUser
-import team.mke.tg.BaseTgUserTable
-import team.mke.tg.TgUserSelector
-import team.mke.tg.getFullName
+import team.mke.tg.*
 import team.mke.utils.db.suspendTransaction
-
-/** /admin */
-val BotCommand.Companion.ADMIN_MENU get() = "admin"
 
 /** /admins */
 val BotCommand.Companion.ADMINS get() = "admins"
 
-
 val CallbackQuery.Companion.ADMINS_PAGE_PREFIX get() = "admins_pages_"
 val CallbackQuery.Companion.ADMINS_PROVIDE_PREFIX get() = "admins_provide_"
 
-
-suspend fun <U : BaseTgUser<*>> EventHandler.sendAdminsMessage(users: Iterable<U>, action: MessageAction, page: Int = Pagination.PAGE_FIRST) = message(action) {
+private suspend fun <U : TgUserWithBaseData<*>> EventHandler.sendAdminsMessage(users: Iterable<U>, filter: String?, action: MessageAction, page: Int = Pagination.PAGE_FIRST) = message(action) {
     suspendTransaction {
-        text = "Отмеченные пользователи галочками являются администраторами"
+        val filtered = if (filter != null) users.filter {
+            it.phone?.contains(filter) == true || it.id.value.toString() == filter || it.getFullName(includeUsername = true).contains(filter, ignoreCase = true)
+        } else users
+        textWithEntities {
+            text("Пользователи отмеченные галочками являются администраторами.").n()
+            n()
+            text("Для фильтрации используйте /${BotCommand.ADMINS} ").code("<filter>")
+        }
         inlineKeyboard {
-            pagination(users, CallbackQuery.ADMINS_PAGE_PREFIX, page) { user ->
+            pagination(filtered, CallbackQuery.ADMINS_PAGE_PREFIX + "${filter ?: ""}_", page, { rows = 10 }) { user ->
                 val prefix = if (user.isAdmin) "☑ " else "🔲 "
-                val name = (user.phone?.let { "($it) " } ?: "") + this@sendAdminsMessage.getChat(user.id.value.toChatId()).getFullName()
-                button(prefix + name, CallbackQuery.ADMINS_PROVIDE_PREFIX + user.id)
+                val name = (user.phone?.let { "($it) " } ?: "") + user.getFullName(includeUsername = true)
+                button(prefix + name, CallbackQuery.ADMINS_PROVIDE_PREFIX + "${filter ?: ""}_" + user.id)
             }
         }
     }
@@ -48,19 +49,26 @@ suspend fun <U : BaseTgUser<*>> EventHandler.sendAdminsMessage(users: Iterable<U
  *
  * @param tgUser текущий пользователь контекста
  * @param userSelector лямбда реализующая [TgUserSelector]
- * @param usersSelector лямбда возвращающая список всех [*валидных*][BaseTgUserTable.valid] пользователей
+ * @param usersSelector лямбда возвращающая список всех [*валидных*][TgUserWithBaseDataTable.valid] пользователей
  * */
-data class AdminsFeature<U : BaseTgUser<*>>(val tgUser: U, val userSelector: TgUserSelector<Long, U>, val usersSelector: () -> Iterable<U>) : BotFeature {
+data class AdminsFeature<U : TgUserWithBaseData<*>>(
+    val tgUser: U,
+    val userSelector: TgUserSelector<Long, U>,
+    val usersSelector: () -> Iterable<U>
+) : BotFeature {
     override suspend fun handle(handler: EventHandler, handled: Boolean) {
         if (!tgUser.isAdmin) return
 
         when(handler) {
             is CallbackQueryHandler -> with(handler) {
-                isPage(CallbackQuery.ADMINS_PAGE_PREFIX) {
-                    sendAdminsMessage(usersSelector(), MessageAction.EDIT, it)
+                isDataStartWith(CallbackQuery.ADMINS_PAGE_PREFIX) { data ->
+                    val (filter, page) = data.split("_")
+                    sendAdminsMessage(usersSelector(), filter.ifEmpty { null }, MessageAction.EDIT, page.drop(1).toInt())
                 }
-                isDataStartWith(CallbackQuery.ADMINS_PROVIDE_PREFIX) { userId ->
+                isDataStartWith(CallbackQuery.ADMINS_PROVIDE_PREFIX) { data ->
                     suspendTransaction {
+                        val (filter, userId) = data.split("_")
+
                         if (userId.toLong() == tgUser.id.value) {
                             alert("Нельзя снять с себя роль администратора")
                             return@suspendTransaction
@@ -75,14 +83,19 @@ data class AdminsFeature<U : BaseTgUser<*>>(val tgUser: U, val userSelector: TgU
                                 }
                             }
                             provideCommands()
-                            sendAdminsMessage(usersSelector(), MessageAction.EDIT, getPreviousPage(CallbackQuery.ADMINS_PAGE_PREFIX))
+                            sendAdminsMessage(usersSelector(), filter.ifEmpty { null }, MessageAction.EDIT, getPreviousPage(CallbackQuery.ADMINS_PAGE_PREFIX))
                         }
                     }
                 }
             }
             is CommandHandler -> with(handler) {
-                isCommand(BotCommand.ADMINS) {
-                    sendAdminsMessage(transaction { usersSelector() }, MessageAction.SEND)
+                isCommand(BotCommand.ADMINS) { filter ->
+                    if (filter != null && filter.length > 25) {
+                        send("Фильтр не должен превышать 25 символов")
+                        return@isCommand
+                    }
+
+                    sendAdminsMessage(transaction { usersSelector() }, filter, MessageAction.SEND)
                 }
             }
             else -> error("AdminsFeature supports only CommandHandler and CallbackQueryHandler")
