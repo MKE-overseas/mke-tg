@@ -16,7 +16,7 @@ class ExposedPaginationFetcherFactory : PaginationFetcherFactory {
                 return if (data is SizedCollection<T>) data.count().toInt() else data.count()
             }
             override fun fetchData(data: Iterable<T>, page: Int, offset: Int, count: Int, rows: Int, columns: Int): Iterable<T> {
-                return if (data is SizedCollection<T>) data.limit(count, offset.toLong())
+                return if (data is SizedCollection<T>) data.limit(count).offset(offset.toLong())
                 else defaultInstance.getFetcher<T>().fetchData(data, page, offset, count, rows, columns)
             }
         }
