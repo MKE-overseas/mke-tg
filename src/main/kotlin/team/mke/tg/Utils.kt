@@ -1,10 +1,9 @@
 package team.mke.tg
 
-import org.jetbrains.exposed.dao.LongEntityClass
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.dao.LongEntityClass
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import ru.raysmith.tgbot.core.handler.EventHandler
 import ru.raysmith.tgbot.core.handler.base.CallbackQueryHandler
-import ru.raysmith.tgbot.core.send
 import ru.raysmith.tgbot.model.bot.BotCommand
 import ru.raysmith.tgbot.model.bot.message.IMessage
 import ru.raysmith.tgbot.model.bot.message.MessageText
@@ -23,7 +22,7 @@ typealias InlineRow = MessageInlineKeyboard.Row
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-fun <U : BaseTgUser<*>> LongEntityClass<U>.findOrAdd(userId: Long) = transaction { findById(userId) ?: new(userId) {} }
+fun <U : BaseTgUser<*>> LongEntityClass<U>.findOrAdd(userId: Long, init: U.() -> Unit) = transaction { findById(userId) ?: new(userId, init) }
 
 suspend fun EventHandler.handleEntityNotAvailable(message: String = recordNotAvailableMessage, reply: Boolean = false) {
     if (this@handleEntityNotAvailable is CallbackQueryHandler) {
@@ -38,7 +37,7 @@ suspend fun EventHandler.handleEntityNotAvailable(message: String = recordNotAva
     }
 }
 
-fun MessageText.applyEntities(entities: List<MessageEntity>?, text: String? = null, commentMaxLength: Int = IMessage.MAX_TEXT_LENGTH) {
+fun MessageText.applyEntities(entities: List<MessageEntity>?, text: String? = null, commentMaxLength: Int = IMessage.MAX_TEXT_LENGTH): MessageText {
     val startLength = currentTextLength
     if (text != null) {
         text(text)
@@ -59,11 +58,13 @@ fun MessageText.applyEntities(entities: List<MessageEntity>?, text: String? = nu
             this.offset = offset
         }
     }
+
+    return this
 }
 
 fun MessageText.appendClearFilterHint() = italic("Отправьте другой запрос или /${BotCommand.CLEAR} для очистки фильтра")
-fun MessageText.appendNameFilterHint(hasFilter: Boolean) {
-    if (hasFilter) {
+fun MessageText.appendNameFilterHint(hasFilter: Boolean): MessageText {
+    return if (hasFilter) {
         appendClearFilterHint()
     } else {
         italic("Отправьте сообщение для фильтрации по наименованию")

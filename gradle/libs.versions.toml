@@ -1,9 +1,9 @@
 [versions]
-kotlin = "2.1.10"
+kotlin = "2.2.21"
 benManes-versions = "0.52.0"
-exposed = "0.60.0"
+exposed = "1.0.0-rc-2"
 nmcp = "0.0.9"
-mke-utils = "2.15.1"
+mke-utils = "4.0.0"
 rs-google = "2.0.3"
 rs-tg-bot = "1.0.0-beta.18"
 rs-utils = "3.3.3"
@@ -13,6 +13,7 @@ rs-utils = "3.3.3"
 # database
 exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
 exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" }
+exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
 
 # google
 google-apis-sheets = { module = "com.google.apis:google-api-services-sheets", version = "v4-rev20241008-2.0.0" }
@@ -23,9 +24,6 @@ raysmith-utils-jvm = { module = "ru.raysmith:utils-jvm", version.ref = "rs-utils
 raysmith-tgBot = { module = "ru.raysmith:tg-bot", version.ref = "rs-tg-bot" }
 raysmith-tgBot-jvm = { module = "ru.raysmith:tg-bot-jvm", version.ref = "rs-tg-bot" }
 raysmith-google = { module = "ru.raysmith:google", version.ref = "rs-google" }
-
-# mke
-mke-utils = { module = "team.mke:mke-utils", version.ref = "mke-utils" }
 
 [plugins]
 nmcp = { id = "com.gradleup.nmcp", version.ref = "nmcp" }

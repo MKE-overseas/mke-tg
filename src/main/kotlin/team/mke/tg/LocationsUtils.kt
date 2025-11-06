@@ -10,17 +10,19 @@ import ru.raysmith.tgbot.utils.locations.LocationConfig
 import ru.raysmith.tgbot.utils.locations.LocationsWrapper
 import ru.raysmith.tgbot.utils.message.MessageAction
 
-context(BotHolder)
+context(botHolder: BotHolder)
 suspend fun <T : LocationConfig> LocationsWrapper<T>.location(location: ILocation, newLocation: suspend ru.raysmith.tgbot.utils.locations.Location<T>.() -> Unit) {
-    location(location.name, newLocation)
+    with(botHolder) {
+        location(location.name, newLocation)
+    }
 }
 
-context(BotContext<*>)
+context(ctx: BotContext<*>)
 suspend fun <T : BaseLocationConfig> LocationHandler<T>.toLocation(location: ILocation, toLocationMessageAction: MessageAction? = null) {
     if (config.toLocationMessageAction == null) {
         config.toLocationMessageAction = toLocationMessageAction
     }
-    toLocation(location.name)
+    ctx.toLocation(location.name)
 }
 
 suspend fun <T : BaseLocationConfig> LocationCallbackQueryHandler<T>.back(location: ILocation) {
@@ -28,8 +30,7 @@ suspend fun <T : BaseLocationConfig> LocationCallbackQueryHandler<T>.back(locati
     toLocation(location.name)
 }
 
-context(LocationCallbackQueryHandler<out BaseLocationConfig>)
-suspend fun setupBack(location: ILocation, ignoreData: Boolean = false) {
+suspend fun LocationCallbackQueryHandler<out BaseLocationConfig>.setupBack(location: ILocation, ignoreData: Boolean = false) {
     isDataEqual(CallbackQuery.BACK) { back(location) }
 
     if (!ignoreData) {
@@ -48,5 +49,3 @@ suspend fun CallbackQueryHandler.isBack(handler: suspend (data: String?) -> Unit
         handler(it)
     }
 }
-
-fun BaseLocationConfig.actionOr(action: MessageAction) = toLocationMessageAction ?: action

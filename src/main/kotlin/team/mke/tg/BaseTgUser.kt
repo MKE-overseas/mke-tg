@@ -1,41 +1,41 @@
 package team.mke.tg
 
-import org.jetbrains.exposed.dao.LongEntity
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.LongIdTable
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.v1.core.and
+import org.jetbrains.exposed.v1.core.dao.id.EntityID
+import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.dao.LongEntity
 import ru.raysmith.tgbot.core.BotContext
 import kotlin.reflect.KClass
 
 abstract class BaseTgUserTable<L : Enum<L>>(
     locationClass: KClass<L>, defaultLocation: L, tableName: String = "tg_users", columnName: String = "id"
 ) : LongIdTable(tableName, columnName) {
-    val location = enumerationByName("location", 255, locationClass).default(defaultLocation)
-    val phone = varchar("phone", 255).nullable()
-    val isBan = bool("is_ban").default(false)
-    val isRegistered = bool("is_registered").default(false)
-    val isAdmin = bool("is_admin").default(false)
+    open val location = enumerationByName("location", 255, locationClass).default(defaultLocation)
+    open val phone = varchar("phone", 255).nullable()
+    open val isBan = bool("is_ban").default(false)
+    open val isRegistered = bool("is_registered").default(false)
+    open val isAdmin = bool("is_admin").default(false)
 
     /** SQL оператор для фильтрации валидных пользователей (не заблокированные и зарегистрированные) */
-    fun valid() = isBan.eq(false) and isRegistered.eq(true)
+    open fun valid() = isBan.eq(false) and isRegistered.eq(true)
 }
 
 abstract class BaseTgUser<L : Enum<L>>(table: BaseTgUserTable<L>, id: EntityID<Long>) : LongEntity(id) {
-    var location by table.location
-    var phone by table.phone
-    var isBan by table.isBan
-    var isRegistered by table.isRegistered
-    var isAdmin by table.isAdmin
+    open var location by table.location
+    open var phone by table.phone
+    open var isBan by table.isBan
+    open var isRegistered by table.isRegistered
+    open var isAdmin by table.isAdmin
 
-    context(BotContext<*>)
+    context(ctx: BotContext<*>)
     abstract suspend fun provideCommands()
 
-    fun ban() {
+    open fun ban() {
         isBan = true
     }
 
-    fun unban() {
+    open fun unban() {
         isBan = false
     }
 }

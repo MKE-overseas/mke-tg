@@ -1,6 +1,7 @@
 package team.mke.tg
 
-import org.jetbrains.exposed.sql.Table
-import team.mke.utils.db.COLLATE_UTF8MB4_UNICODE_CI
+import com.google.api.services.docs.v1.model.Table
+import org.jetbrains.exposed.v1.core.Table.Dual.text
+import team.mke.utils.db.Collation
 
-fun Table.botComment(name: String = "comment") = text(name, COLLATE_UTF8MB4_UNICODE_CI)
+fun Table.botComment(name: String = "comment") = text(name, Collation.utf8mb4_unicode_520_ci)

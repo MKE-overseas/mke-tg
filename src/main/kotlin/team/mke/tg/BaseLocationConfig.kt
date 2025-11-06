@@ -6,4 +6,6 @@ import ru.raysmith.tgbot.utils.message.MessageAction
 abstract class BaseLocationConfig : LocationConfig {
     var backData: String? = null
     var toLocationMessageAction: MessageAction? = null
+
+    fun actionOr(action: MessageAction) = toLocationMessageAction ?: action
 }

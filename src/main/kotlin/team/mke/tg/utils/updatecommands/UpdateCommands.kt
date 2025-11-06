@@ -5,6 +5,6 @@ import ru.raysmith.tgbot.model.bot.ChatId
 
 fun interface UpdateCommands {
 
-    context(BotContext<*>)
+    context(ctx: BotContext<*>)
     suspend fun updateCommands(chatId: ChatId.ID, silently: Boolean)
 }

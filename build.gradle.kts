@@ -9,16 +9,17 @@ plugins {
 }
 
 group = "team.mke"
-version = "1.5.4"
+version = "2.0.0"
 
 dependencies {
     implementation(libs.raysmith.tgBot.jvm)
     implementation(libs.raysmith.utils.jvm)
     implementation(libs.raysmith.google)
-    implementation(libs.mke.utils)
     implementation(libs.exposed.core)
     implementation(libs.exposed.dao)
+    implementation(libs.exposed.jdbc)
     implementation(libs.google.apis.sheets)
+    implementation(mke.db)
 }
 
 tasks {
@@ -40,7 +41,7 @@ tasks {
 
 kotlin {
     compilerOptions {
-        freeCompilerArgs.add("-Xcontext-receivers")
+        freeCompilerArgs.add("-Xcontext-parameters")
     }
 }
 

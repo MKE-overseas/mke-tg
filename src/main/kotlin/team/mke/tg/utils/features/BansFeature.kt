@@ -1,6 +1,8 @@
 package team.mke.tg.utils.features
 
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.core.Transaction
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import ru.raysmith.tgbot.core.BotHolder
 import ru.raysmith.tgbot.core.handler.EventHandler
 import ru.raysmith.tgbot.core.handler.base.CallbackQueryHandler
 import ru.raysmith.tgbot.core.handler.base.CommandHandler
@@ -23,17 +25,18 @@ val BotCommand.Companion.BANS_MENU get() = "bans"
 val CallbackQuery.Companion.BANS_PAGE_PREFIX get() = "bans_pages_"
 val CallbackQuery.Companion.BANS_BAN_PREFIX get() = "bans_ban_"
 
+context(botHolder: BotHolder)
 private suspend fun <U : TgUserWithBaseData<*>> EventHandler.sendBansMessage(users: Iterable<U>, filter: String?, action: MessageAction, page: Int = Pagination.PAGE_FIRST) = message(action) {
-    suspendTransaction {
-        val filtered = if (filter != null) users.filter {
-            it.phone?.contains(filter) == true || it.id.value.toString() == filter || it.getFullName(includeUsername = true).contains(filter, ignoreCase = true)
-        } else users
-        textWithEntities {
-            text("Пользователи отмеченные галочками являются заблокированными.").n()
-            n()
-            text("Для фильтрации используйте /${BotCommand.BANS_MENU} ").code("<filter>")
-        }
-        inlineKeyboard {
+    val filtered = if (filter != null) users.filter {
+        it.phone?.contains(filter) == true || it.id.value.toString() == filter || it.getFullName(includeUsername = true).contains(filter, ignoreCase = true)
+    } else users
+    textWithEntities {
+        text("Пользователи отмеченные галочками являются заблокированными.").n()
+        n()
+        text("Для фильтрации используйте /${BotCommand.BANS_MENU} ").code("<filter>")
+    }
+    inlineKeyboard {
+        with(botHolder) {
             pagination(filtered, CallbackQuery.BANS_PAGE_PREFIX + "${filter ?: ""}_", page, { rows = 10 }) { user ->
                 val prefix = if (user.isBan) "☑ " else "🔲 "
                 val name = (user.phone?.let { "($it) " } ?: "") + user.getFullName(includeUsername = true)
@@ -54,7 +57,7 @@ private suspend fun <U : TgUserWithBaseData<*>> EventHandler.sendBansMessage(use
 data class BansFeature<U : TgUserWithBaseData<*>>(
     val tgUser: U,
     val userSelector: TgUserSelector<Long, U>,
-    val usersSelector: () -> Iterable<U>
+    val usersSelector: context(Transaction) () -> Iterable<U>
 ) : BotFeature {
     override suspend fun handle(handler: EventHandler, handled: Boolean) {
         if (!tgUser.isAdmin) return
@@ -63,7 +66,7 @@ data class BansFeature<U : TgUserWithBaseData<*>>(
             is CallbackQueryHandler -> with(handler) {
                 isDataStartWith(CallbackQuery.BANS_PAGE_PREFIX) { data ->
                     val (filter, page) = data.split("_")
-                    sendBansMessage(usersSelector(), filter.ifEmpty { null }, MessageAction.EDIT, page.drop(1).toInt())
+                    sendBansMessage(transaction { usersSelector() }, filter.ifEmpty { null }, MessageAction.EDIT, page.drop(1).toInt())
                 }
                 isDataStartWith(CallbackQuery.BANS_BAN_PREFIX) { data ->
                     suspendTransaction {
