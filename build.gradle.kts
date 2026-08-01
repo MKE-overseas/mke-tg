@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "team.mke"
-version = "2.0.0"
+version = "2.0.0-rc2"
 
 dependencies {
     implementation(libs.raysmith.tgBot.jvm)
@@ -20,6 +20,7 @@ dependencies {
     implementation(libs.exposed.jdbc)
     implementation(libs.google.apis.sheets)
     implementation(mke.db)
+    implementation(libs.kotlinx.serialization.json)
 }
 
 tasks {

@@ -1,9 +1,9 @@
 package team.mke.tg
 
-import ru.raysmith.tgbot.utils.locations.LocationConfig
+import ru.raysmith.tgbot.utils.locations.LocationFlowContext
 import ru.raysmith.tgbot.utils.message.MessageAction
 
-abstract class BaseLocationConfig : LocationConfig {
+abstract class BaseLocationFlowContext : LocationFlowContext {
     var backData: String? = null
     var toLocationMessageAction: MessageAction? = null
 

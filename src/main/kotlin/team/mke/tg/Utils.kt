@@ -63,10 +63,14 @@ fun MessageText.applyEntities(entities: List<MessageEntity>?, text: String? = nu
 }
 
 fun MessageText.appendClearFilterHint() = italic("Отправьте другой запрос или /${BotCommand.CLEAR} для очистки фильтра")
-fun MessageText.appendNameFilterHint(hasFilter: Boolean): MessageText {
+fun MessageText.appendFilterHint(hasFilter: Boolean): MessageText {
     return if (hasFilter) {
         appendClearFilterHint()
     } else {
         italic("Отправьте сообщение для фильтрации по наименованию")
     }
 }
+
+typealias MessageTextBuilder = MessageText.() -> MessageText
+
+val Boolean.checkMarkPrefix: String get() = if (this) "☑" else "🔲"

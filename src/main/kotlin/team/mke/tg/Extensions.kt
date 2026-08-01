@@ -22,24 +22,6 @@ fun IChat.getFullName(includeUsername: Boolean = false): String = buildString {
     }
 }
 
-
-fun TgUserWithBaseData<*>.getFullName(includeUsername: Boolean = false): String = buildString {
-    append(firstName)
-    if (lastName != null) {
-        append(" ")
-    }
-    append(lastName ?: "")
-    if (includeUsername && username != null && this.isNotEmpty()) {
-        append(" (")
-        append(username)
-        append(")")
-    }
-
-    if (this.isEmpty()) {
-        append("[$id] Без имени")
-    }
-}
-
 fun Contact.phoneFormatted(onlyRuPhones: Boolean = false) = phoneNumber.phoneFormatted(onlyRuPhones)
     .let { "+$it" }
     .letIf({ it.startsWith("+8") && it.length == 12 }) { it.replace("+8", "+7") }

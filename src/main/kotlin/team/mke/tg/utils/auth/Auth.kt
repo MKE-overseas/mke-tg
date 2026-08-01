@@ -11,6 +11,7 @@ import ru.raysmith.tgbot.utils.message.MessageAction
 import ru.raysmith.tgbot.utils.message.message
 import ru.raysmith.tgbot.utils.n
 import team.mke.tg.BaseTgUser
+import team.mke.tg.MessageTextBuilder
 import team.mke.tg.phoneFormatted
 
 /**
@@ -103,7 +104,7 @@ suspend fun EventHandler.sendAuthMessage(
 }
 
 suspend fun EventHandler.sendAuthTemporaryNotAvailableMessage(
-    additionalInfo: MessageText.() -> MessageText = { this }
+    additionalInfo: MessageTextBuilder = { this }
 ) = send {
     textWithEntities {
         text("Авторизация временно недоступна.").n()

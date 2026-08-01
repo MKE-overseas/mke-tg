@@ -5,7 +5,7 @@ import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.dao.LongEntity
-import ru.raysmith.tgbot.core.BotContext
+import ru.raysmith.tgbot.network.API
 import kotlin.reflect.KClass
 
 abstract class BaseTgUserTable<L : Enum<L>>(
@@ -28,7 +28,7 @@ abstract class BaseTgUser<L : Enum<L>>(table: BaseTgUserTable<L>, id: EntityID<L
     open var isRegistered by table.isRegistered
     open var isAdmin by table.isAdmin
 
-    context(ctx: BotContext<*>)
+    context(api: API)
     abstract suspend fun provideCommands()
 
     open fun ban() {

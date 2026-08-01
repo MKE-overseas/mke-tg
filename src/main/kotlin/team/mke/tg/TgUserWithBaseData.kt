@@ -25,7 +25,22 @@ abstract class TgUserWithBaseData<L : Enum<L>>(table: TgUserWithBaseDataTable<L>
         username = user.username
     }
 
-    open fun fullname() = "$firstName${lastName?.let { " $it" } ?: ""}"
+    open fun fullname(includeUsername: Boolean = false) = buildString {
+        append(firstName)
+        if (lastName != null) {
+            append(" ")
+        }
+        append(lastName ?: "")
+        if (includeUsername && username != null && this.isNotEmpty()) {
+            append(" (")
+            append(username)
+            append(")")
+        }
+
+        if (this.isEmpty()) {
+            append("#$id")
+        }
+    }
 
     open fun toTgUser() = User(
         id = id.value.toChatId(),
